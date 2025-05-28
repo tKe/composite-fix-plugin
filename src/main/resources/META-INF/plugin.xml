@@ -1,15 +1,13 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.tke.compositefixplugin</id>
-    <name>composite-fix-plugin</name>
+    <name>Composite-Fix</name>
     <vendor>tke</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.gradle</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
-
-    <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.tke.compositefixplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.tke.compositefixplugin.startup.MyProjectActivity" />
+    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+        <taskManager implementation="com.github.tke.compositefixplugin.CompositeBuildJvmOptionsFix" order="last"/>
     </extensions>
 </idea-plugin>

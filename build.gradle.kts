@@ -1,6 +1,7 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 
 plugins {
     id("java") // Java support
@@ -36,7 +37,11 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+        create(
+            providers.gradleProperty("platformType"),
+            providers.gradleProperty("platformVersion"),
+            providers.gradleProperty("platformInstaller").map { it.toBooleanStrict() },
+        )
 
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
         bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
@@ -131,6 +136,11 @@ tasks {
 
     publishPlugin {
         dependsOn(patchChangelog)
+    }
+
+    withType<RunIdeTask> {
+        // strip any debug env-vars from propagating to the target IDE
+        environment = environment - "DEBUGGER_ENABLED" - "DEBUGGER_ID"
     }
 }
 
